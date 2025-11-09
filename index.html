@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoShield Web</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>CRYPTOSHIELD <span style="color: #00ff9d;">WEB</span></h1>
+        
+        <div id="dropzone">
+            <p>Touch aqui ou arraste arquivo</p>
+            <input type="file" id="fileInput" hidden 
+                   accept=".apk,.png,.pdf,.exe">
+            <button onclick="document.getElementById('fileInput').click()">
+                SELECIONAR ARQUIVO
+            </button>
+        </div>
+
+        <div id="progress" style="display: none;">
+            <p id="status">Processando...</p>
+            <progress value="0" max="100"></progress>
+        </div>
+    </div>
+
+    <script type="module">
+        import { SecureCore } from './engine/crypto.js';
+        import { CodeDisguise } from './engine/obfuscator.js';
+        import { AntiAnalysis } from './engine/antivm.js';
+
+        const fileInput = document.getElementById('fileInput');
+        const status = document.getElementById('status');
+        
+        // Inicialização
+        const crypto = new SecureCore();
+        const disguise = new CodeDisguise();
+        const anti = new AntiAnalysis();
+
+        // Bloqueia rodar em VMs
+        if (anti.detectVM()) {
+            console.clear();
+            document.body.innerHTML = '<p>404</p>';
+            return;
+        }
+
+        // Ofuscação global
+        disguise.obfuscate(crypto);
+
+        // Eventos touch
+        fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const { blob, password } = await crypto.encryptFile(file);
+            const url = URL.createObjectURL(blob);
+
+            // Download automático
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = file.name + '.crypted';
+            a.click();
+
+            // Notificação
+            new Notification(`Arquivo ${file.name} criptografado com sucesso!`);
+        });
+
+        // Touch gestures para arrastar
+        document.body.ondrop = (e) => {
+            e.preventDefault();
+            const file = e.dataTransfer.files[0];
+            fileInput.files = e.dataTransfer.files;
+            fileInput.dispatchEvent(new Event('change'));
+        };
+    </script>
+
+    <script>
+        // Service Worker (PWA)
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+</body>
+</html>
