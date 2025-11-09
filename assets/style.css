@@ -1,0 +1,39 @@
+body {
+    margin: 0;
+    background: #111;
+    color: white;
+    font-family: 'Courier', monospace;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+button {
+    background: #00ff9d;
+    border: none;
+    padding: 20px 40px;
+    font-size: 1.5em;
+    border-radius: 10px;
+    cursor: pointer;
+    user-select: none;
+    touch-action: manipulation;
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+#dropzone {
+    border: 2px dashed #333;
+    padding: 50px;
+    text-align: center;
+}
+
+.dropzone-active {
+    border-color: #00ff9d;
+}
